@@ -10,6 +10,7 @@ import com.example.parcial_1_moviles.R
 import com.example.parcial_1_moviles.databinding.ItemsBinding
 
 
+
 class LibroAdapter(private val onClick: (Book) -> Unit) :
     ListAdapter<Book, LibroAdapter.BookViewHolder>(DIFF) {
 
@@ -46,4 +47,6 @@ class LibroAdapter(private val onClick: (Book) -> Unit) :
     override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
+
+
 }

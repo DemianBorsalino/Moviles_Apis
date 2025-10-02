@@ -4,34 +4,51 @@ import com.example.parcial_1_moviles.UiState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.parcial_1_moviles.Service.RepositorioLibros
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class LibroViewModel(private val repository: RepositorioLibros): ViewModel() {
+class LibroViewModel(private val repository: RepositorioLibros) : ViewModel() {
 
-    private val _booksState = MutableLiveData<UiState<List<Book>>>()
-    val booksState: LiveData<UiState<List<Book>>> = _booksState
+    private val _uiState = MutableLiveData<UiState<List<Book>>>()
+    val uiState: LiveData<UiState<List<Book>>> = _uiState
+
+    private var lastQuery: String = ""
 
     fun searchBooks(query: String) {
+        lastQuery = query
+        _uiState.value = UiState.Loading
+
         viewModelScope.launch {
-            _booksState.value = UiState.Loading
             try {
-                val list = repository.searchBooks(query)
-                if (list.isEmpty()) {
-                    _booksState.value = UiState.Empty
-                   } else {
-                    _booksState.value = UiState.Success(list)
+                val books = repository.searchBooks(query)
+                if (books.isEmpty()) {
+                    _uiState.value = UiState.Empty
+                } else {
+                    _uiState.value = UiState.Success(books)
                 }
-            } catch (io: IOException) {
-                _booksState.value = UiState.Error("Network error: ${io.message}", io)
-            } catch (http: HttpException) {
-                _booksState.value = UiState.Error("API error: ${http.message}", http)
             } catch (e: Exception) {
-                _booksState.value = UiState.Error("Unexpected error: ${e.localizedMessage}", e)
+                _uiState.value = UiState.Error(e.localizedMessage ?: "Unknown error", e)
             }
         }
+    }
+
+    fun retryLastSearch() {
+        if (lastQuery.isNotEmpty()) searchBooks(lastQuery)
+    }
+}
+
+// ViewModelFactory para poder pasar el repositorio
+class LibroViewModelFactory(private val repository: RepositorioLibros) :
+    ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(LibroViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return LibroViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

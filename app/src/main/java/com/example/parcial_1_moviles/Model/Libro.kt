@@ -1,6 +1,8 @@
 package com.example.parcial_1_moviles.Model
 
 import com.google.gson.annotations.SerializedName
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
 data class Libro(
     @SerializedName("docs") val docs: List<DocDto> = emptyList()
@@ -15,13 +17,14 @@ data class DocDto(
 )
 
 // Domain model
+@Parcelize
 data class Book(
     val id: String,
     val title: String,
     val author: String?,
     val year: Int?,
     val coverUrl: String?
-)
+) : Parcelable
 
 // Mapper
 fun DocDto.toDomain(): Book {

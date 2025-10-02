@@ -1,99 +1,80 @@
-package com.example.parcial_1_moviles
+package com.example.parcial_1_moviles.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.appcompat.widget.SearchView
+import com.example.parcial_1_moviles.Model.Book
 import com.example.parcial_1_moviles.Model.LibroAdapter
-import com.example.parcial_1_moviles.Model.LibroVMFactory
 import com.example.parcial_1_moviles.Model.LibroViewModel
+import com.example.parcial_1_moviles.Model.LibroViewModelFactory
 import com.example.parcial_1_moviles.Service.RepositorioLibros
 import com.example.parcial_1_moviles.Service.RetrofitClient
+import com.example.parcial_1_moviles.UiState
 import com.example.parcial_1_moviles.databinding.ActivityMainBinding
+import com.example.parcial_1_moviles.ui.detail.DetailActivity
 
-class MainActivity : AppCompatActivity() {
+class   MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    val repository = RepositorioLibros(RetrofitClient.api)
+    val factory = LibroViewModelFactory(repository)
+    private val viewModel: LibroViewModel by viewModels { factory }
 
-    // keep last query to support retry
-    private var lastQuery: String = ""
+    private lateinit var adapter: LibroAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Create repository & viewModel via factory
-        val api = RetrofitClient.api
-        val repository = RepositorioLibros(api)
-        val factory = LibroVMFactory(repository)
-        val viewModel = ViewModelProvider(this, factory).get(LibroViewModel::class.java)
+        setupRecyclerView()
+        observeViewModel()
+        setupRetryButton()
 
-        val adapter = LibroAdapter { book ->
-            // English comment: handle item click -> navigate to detail screen (to implement)
-            Toast.makeText(this, "Clicked: ${book.title}", Toast.LENGTH_SHORT).show()
-            // Intent to DetailActivity can be added here passing book.id
-        }
+        // Trigger API call with default query
+        viewModel.searchBooks("harry potter")
+    }
 
-        binding.rvBooks.adapter = adapter
-        binding.rvBooks.layoutManager = LinearLayoutManager(this)
+    private fun setupRecyclerView() {
+        adapter = LibroAdapter { book -> navigateToDetail(book) }
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
+    }
 
-        // Observe the view state and update UI accordingly.
-        viewModel.booksState.observe(this) { state ->
+    private fun observeViewModel() {
+        viewModel.uiState.observe(this) { state ->
             when (state) {
-                is UiState.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.rvBooks.visibility = View.GONE
-                    binding.tvEmpty.visibility = View.GONE
-                    binding.layoutError.visibility = View.GONE
-                }
+                is UiState.Loading -> { /* mostrar progress */ }
                 is UiState.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.rvBooks.visibility = View.VISIBLE
-                    binding.layoutError.visibility = View.GONE
-                    binding.tvEmpty.visibility = View.GONE
-                    adapter.submitList(state.data)
+                    val books = state.data as? List<Book> ?: emptyList()
+                    if (books.isEmpty()) {
+                        binding.tvEmpty.visibility = View.VISIBLE
+                        binding.recyclerView.visibility = View.GONE
+                    } else {
+                        adapter.submitList(books)
+                        binding.recyclerView.visibility = View.VISIBLE
+                        binding.tvEmpty.visibility = View.GONE
+                    }
                 }
-                is UiState.Empty -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.rvBooks.visibility = View.GONE
-                    binding.tvEmpty.visibility = View.VISIBLE
-                    binding.layoutError.visibility = View.GONE
-                }
-                is UiState.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.rvBooks.visibility = View.GONE
-                    binding.tvEmpty.visibility = View.GONE
-                    binding.layoutError.visibility = View.VISIBLE
-                    binding.tvError.text = state.message
-                }
+                is UiState.Empty -> { /* mostrar empty view */ }
+                is UiState.Error -> { /* mostrar error */ }
             }
         }
+    }
 
-        // SearchView listener
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                val q = query?.trim().orEmpty()
-                if (q.isNotEmpty()) {
-                    lastQuery = q
-                    viewModel.searchBooks(q)
-                }
-                binding.searchView.clearFocus()
-                return true
-            }
-            override fun onQueryTextChange(newText: String?): Boolean = false
-        })
-
-        // Retry button
+    private fun setupRetryButton() {
         binding.btnRetry.setOnClickListener {
-            if (lastQuery.isNotEmpty()) {
-                viewModel.searchBooks(lastQuery)
-            } else {
-                Toast.makeText(this, "Please enter a query", Toast.LENGTH_SHORT).show()
-            }
+            viewModel.retryLastSearch()
         }
+    }
+
+    private fun navigateToDetail(book: Book) {
+        val intent = Intent(this, DetailActivity::class.java)
+        intent.putExtra("book", book)
+        startActivity(intent)
     }
 }

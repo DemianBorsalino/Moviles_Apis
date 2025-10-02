@@ -16,12 +16,12 @@ object RetrofitClient {
         .addInterceptor(logging)
         .build()
 
-    val api: OpenLibraryApi by lazy {
+    val api: OpenLibraryAPI by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(OpenLibraryApi::class.java)
+            .create(OpenLibraryAPI::class.java)
     }
 }

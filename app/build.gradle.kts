@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
 }
+apply(plugin = "kotlin-parcelize")
+
 
 android {
     namespace = "com.example.parcial_1_moviles"
