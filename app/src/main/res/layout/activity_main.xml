@@ -8,7 +8,14 @@
     android:padding="16dp"
     tools:context=".ui.main.MainActivity">
 
-    <!-- Progress indicator for loading state -->
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Buscar libro..."
+        android:iconifiedByDefault="false"
+        android:layout_marginBottom="8dp" />
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
@@ -16,7 +23,6 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
-    <!-- Empty view when no data is available -->
     <TextView
         android:id="@+id/tvEmpty"
         android:layout_width="wrap_content"
@@ -27,7 +33,6 @@
         android:textSize="16sp"
         android:padding="16dp"/>
 
-    <!-- Retry button in case of error -->
     <Button
         android:id="@+id/btnRetry"
         android:layout_width="wrap_content"
@@ -37,7 +42,6 @@
         android:layout_gravity="center"
         android:padding="8dp"/>
 
-    <!-- RecyclerView for the list of books -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"

@@ -26,6 +26,6 @@ class DetailActivity : AppCompatActivity() {
     private fun bindBook(book: Book) {
         binding.tvTitle.text = book.title
         binding.tvAuthor.text = book.author
-        binding.tvYear.text = book.year?.toString() ?: "N/A"
+        binding.tvYear.text = book.year?.toString()
     }
 }
