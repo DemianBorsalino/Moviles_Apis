@@ -13,7 +13,11 @@ data class DocDto(
     @SerializedName("title") val title: String? = null,
     @SerializedName("author_name") val authorName: List<String>? = null,
     @SerializedName("first_publish_year") val firstPublishYear: Int? = null,
-    @SerializedName("cover_i") val coverId: Int? = null
+    @SerializedName("cover_i") val coverId: Int? = null,
+    @SerializedName("ebook_access") val ebookAccess: String? = null,
+    @SerializedName("edition_count") val editionCount: Int? = null,
+    @SerializedName("language") val language: List<String>? = null
+
 )
 
 // Domain model
@@ -23,7 +27,10 @@ data class Book(
     val title: String,
     val author: String?,
     val year: Int?,
-    val coverUrl: String?
+    val coverUrl: String?,
+    val ebookAccess: String?,
+    val editionCount: Int?,
+    val language: List<String>?
 ) : Parcelable
 
 // Mapper
@@ -35,6 +42,10 @@ fun DocDto.toDomain(): Book {
         title = this.title.orEmpty(),
         author = this.authorName?.firstOrNull(),
         year = this.firstPublishYear,
-        coverUrl = cover
+        coverUrl = cover,
+        ebookAccess = this.ebookAccess,
+        editionCount = this.editionCount,
+        language = this.language
+
     )
 }

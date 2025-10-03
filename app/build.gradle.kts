@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
+    id("org.jetbrains.kotlin.kapt")
 }
 apply(plugin = "kotlin-parcelize")
 
@@ -67,4 +69,7 @@ dependencies {
     implementation ("androidx.recyclerview:recyclerview:1.3.0")
     implementation ("com.google.android.material:material:1.9.0")
     implementation ("io.coil-kt:coil:2.4.0") // image loading
+
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    kapt ("com.github.bumptech.glide:compiler:4.16.0")
 }
