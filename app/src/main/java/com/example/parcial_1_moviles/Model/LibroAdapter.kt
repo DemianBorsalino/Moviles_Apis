@@ -5,10 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.example.parcial_1_moviles.R
 import com.example.parcial_1_moviles.databinding.ItemsBinding
-
+import com.bumptech.glide.Glide
 
 
 class LibroAdapter(private val onClick: (Book) -> Unit) :
@@ -31,7 +30,14 @@ class LibroAdapter(private val onClick: (Book) -> Unit) :
             binding.tvYear.text = item.year?.toString() ?: ""
             // load image with Coil (no explicit colors or styles)
             //binding.ivCover.setImageResource(android.R.drawable.ic_menu_report_image) //Por si lo lográs hacer funcionar
-            item.coverUrl?.let { binding.ivCover.load(it) } //Quería ponerle una imágen pero no funcionaba no se por qué
+            //item.coverUrl?.let { binding.ivCover.load(it) } //Quería ponerle una imágen pero no funcionaba no se por qué
+
+            Glide.with(binding.root.context)
+                .load(item.coverUrl)
+                .placeholder(android.R.drawable.ic_menu_report_image) // placeholder while loading
+                .error(android.R.drawable.ic_menu_report_image)       // fallback if error
+                .into(binding.ivCover)
+
 
             binding.root.setOnClickListener {
                 onClick(item)

@@ -3,9 +3,9 @@ package com.example.parcial_1_moviles.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.parcial_1_moviles.Model.Book
 import com.example.parcial_1_moviles.Model.LibroAdapter
@@ -17,11 +17,11 @@ import com.example.parcial_1_moviles.UiState
 import com.example.parcial_1_moviles.databinding.ActivityMainBinding
 import com.example.parcial_1_moviles.ui.detail.DetailActivity
 
-class   MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    val repository = RepositorioLibros(RetrofitClient.api)
-    val factory = LibroViewModelFactory(repository)
+    private val repository = RepositorioLibros(RetrofitClient.api)
+    private val factory = LibroViewModelFactory(repository)
     private val viewModel: LibroViewModel by viewModels { factory }
 
     private lateinit var adapter: LibroAdapter
@@ -34,9 +34,29 @@ class   MainActivity : AppCompatActivity() {
         setupRecyclerView()
         observeViewModel()
         setupRetryButton()
+        setupSearchView()
 
-        // Trigger API call with default query
+        // Búsqueda inicial por defecto
         viewModel.searchBooks("harry potter")
+    }
+
+    private fun setupSearchView() { //Agregé esta función que permite justamente el buscador
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    if (it.isNotBlank()) {
+                        viewModel.searchBooks(it)
+                    }
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Si querés búsqueda en tiempo real, podés descomentar:
+                // if (!newText.isNullOrBlank()) viewModel.searchBooks(newText)
+                return true
+            }
+        })
     }
 
     private fun setupRecyclerView() {
@@ -48,8 +68,11 @@ class   MainActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.uiState.observe(this) { state ->
             when (state) {
-                is UiState.Loading -> { /* mostrar progress */ }
+                is UiState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
                 is UiState.Success -> {
+                    binding.progressBar.visibility = View.GONE
                     val books = state.data as? List<Book> ?: emptyList()
                     if (books.isEmpty()) {
                         binding.tvEmpty.visibility = View.VISIBLE
@@ -60,8 +83,17 @@ class   MainActivity : AppCompatActivity() {
                         binding.tvEmpty.visibility = View.GONE
                     }
                 }
-                is UiState.Empty -> { /* mostrar empty view */ }
-                is UiState.Error -> { /* mostrar error */ }
+                is UiState.Empty -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.tvEmpty.visibility = View.VISIBLE
+                    binding.recyclerView.visibility = View.GONE
+                }
+                is UiState.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.tvEmpty.visibility = View.VISIBLE
+                    binding.recyclerView.visibility = View.GONE
+                    binding.tvEmpty.text = "Error al cargar los datos"
+                }
             }
         }
     }
