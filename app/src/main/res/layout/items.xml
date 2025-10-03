@@ -40,5 +40,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivFavorite"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_star_border"
+            android:padding="4dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:contentDescription="Favorite icon"/>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -71,5 +71,6 @@ dependencies {
 
 
     implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation("org.apache.commons:commons-text:1.10.0")
     kapt ("com.github.bumptech.glide:compiler:4.16.0")
 }

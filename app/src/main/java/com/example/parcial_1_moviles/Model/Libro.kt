@@ -30,7 +30,8 @@ data class Book(
     val coverUrl: String?,
     val ebookAccess: String?,
     val editionCount: Int?,
-    val language: List<String>?
+    val language: List<String>?,
+    var isFavorite: Boolean = false
 ) : Parcelable
 
 // Mapper

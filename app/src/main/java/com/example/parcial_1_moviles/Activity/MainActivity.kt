@@ -1,4 +1,4 @@
-package com.example.parcial_1_moviles.ui.main
+package com.example.parcial_1_moviles.Activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +13,7 @@ import com.example.parcial_1_moviles.Model.LibroViewModel
 import com.example.parcial_1_moviles.Model.LibroViewModelFactory
 import com.example.parcial_1_moviles.Service.RepositorioLibros
 import com.example.parcial_1_moviles.Service.RetrofitClient
-import com.example.parcial_1_moviles.UiState
+import com.example.parcial_1_moviles.Activity.UiState
 import com.example.parcial_1_moviles.databinding.ActivityMainBinding
 import com.example.parcial_1_moviles.ui.detail.DetailActivity
 
@@ -36,31 +36,47 @@ class MainActivity : AppCompatActivity() {
         setupRetryButton()
         setupSearchView()
 
-        // Búsqueda inicial por defecto
+        // Initial default search
         viewModel.searchBooks("harry potter")
     }
 
-    private fun setupSearchView() { //Agregé esta función que permite justamente el buscador
+    private fun setupSearchView() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
                     if (it.isNotBlank()) {
-                        viewModel.searchBooks(it)
+                        // ✅ Aplicamos corrección antes de buscar
+                        val correctedQuery = autocorrectQuery(it)
+                        viewModel.searchBooks(correctedQuery)
                     }
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                // Si querés búsqueda en tiempo real, podés descomentar:
-                // if (!newText.isNullOrBlank()) viewModel.searchBooks(newText)
                 return true
             }
         })
     }
 
+    // ✅ Función de autocorrección
+    private fun autocorrectQuery(query: String): String {
+        val replacements = mapOf(
+            "rign" to "ring",
+            "hary poter" to "harry potter",
+            "tolken" to "tolkien"
+        )
+
+        val lower = query.lowercase()
+        return replacements[lower] ?: query
+    }
+
+
     private fun setupRecyclerView() {
-        adapter = LibroAdapter { book -> navigateToDetail(book) }
+        adapter = LibroAdapter(
+            onItemClick = { book -> navigateToDetail(book) },
+            onFavoriteClick = { book -> viewModel.toggleFavorite(book); adapter.notifyDataSetChanged() }
+        )
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
     }

@@ -1,4 +1,4 @@
-package com.example.parcial_1_moviles
+package com.example.parcial_1_moviles.Activity
 
 sealed class UiState<out T> {
     object Loading: UiState<Nothing>()
