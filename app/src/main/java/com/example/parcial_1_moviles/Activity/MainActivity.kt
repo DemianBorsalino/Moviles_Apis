@@ -17,6 +17,7 @@ import com.example.parcial_1_moviles.Activity.UiState
 import com.example.parcial_1_moviles.databinding.ActivityMainBinding
 import com.example.parcial_1_moviles.ui.detail.DetailActivity
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -38,6 +39,14 @@ class MainActivity : AppCompatActivity() {
 
         // Initial default search
         viewModel.searchBooks("harry potter")
+
+        binding.btnFavoritos.setOnClickListener {
+            val intent = Intent(this, FavoritesActivity::class.java)
+            val favoritos = ArrayList(viewModel.favorites.value ?: emptyList())
+            intent.putParcelableArrayListExtra("favoritos", favoritos)
+            startActivity(intent)
+        }
+
     }
 
     private fun setupSearchView() {
