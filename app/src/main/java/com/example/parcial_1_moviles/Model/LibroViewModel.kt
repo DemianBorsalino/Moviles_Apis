@@ -1,5 +1,6 @@
 package com.example.parcial_1_moviles.Model
 
+import android.util.Log
 import com.example.parcial_1_moviles.Activity.UiState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,7 +20,7 @@ class LibroViewModel(private val repository: RepositorioLibros) : ViewModel() {
     private var lastQuery: String = ""
 
     fun searchBooks(query: String) {
-        val correctedQuery = autocorrectQuery(query) // ✅ Corrección aplicada aquí
+        val correctedQuery = autocorrectQuery(query)
         lastQuery = correctedQuery
         _uiState.value = UiState.Loading
 
@@ -31,8 +32,20 @@ class LibroViewModel(private val repository: RepositorioLibros) : ViewModel() {
                 } else {
                     _uiState.value = UiState.Success(books)
                 }
+            } catch (e: retrofit2.HttpException) {
+                // Errores HTTP específicos
+                val code = e.code()
+                Log.e("BookViewModel", "HTTP error $code: ${e.message()}")
+
+                _uiState.value = UiState.Error("Error al cargar libros", e)
+            } catch (e: java.net.UnknownHostException) {
+                // Sin conexión a Internet
+                Log.e("BookViewModel", "Sin conexión a Internet", e)
+                _uiState.value = UiState.Error("No hay conexión a Internet", e)
             } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.localizedMessage ?: "Unknown error", e)
+                // Otros errores genéricos
+                Log.e("BookViewModel", "Error inesperado", e)
+                _uiState.value = UiState.Error("Error al cargar libros", e)
             }
         }
     }
@@ -55,7 +68,6 @@ class LibroViewModel(private val repository: RepositorioLibros) : ViewModel() {
         _favorites.value = list
     }
 
-    // ✅ Función de autocorrección
     private fun autocorrectQuery(query: String): String {
         val replacements = mapOf(
             "rign" to "ring",

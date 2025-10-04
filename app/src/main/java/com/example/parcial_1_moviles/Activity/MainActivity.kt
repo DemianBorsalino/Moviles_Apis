@@ -2,6 +2,7 @@ package com.example.parcial_1_moviles.Activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -52,7 +53,6 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
                     if (it.isNotBlank()) {
-                        // ✅ Aplicamos corrección antes de buscar
                         val correctedQuery = autocorrectQuery(it)
                         viewModel.searchBooks(correctedQuery)
                     }
@@ -66,7 +66,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    // ✅ Función de autocorrección
     private fun autocorrectQuery(query: String): String {
         val replacements = mapOf(
             "rign" to "ring",
@@ -105,17 +104,28 @@ class MainActivity : AppCompatActivity() {
                         binding.recyclerView.visibility = View.VISIBLE
                         binding.tvEmpty.visibility = View.GONE
                     }
+                    binding.btnRetry.visibility = View.GONE
                 }
                 is UiState.Empty -> {
                     binding.progressBar.visibility = View.GONE
-                    binding.tvEmpty.visibility = View.VISIBLE
                     binding.recyclerView.visibility = View.GONE
+                    binding.tvEmpty.apply {
+                        visibility = View.VISIBLE
+                        text = "No se ha encontrado el libro buscado"
+                    }
                 }
+
                 is UiState.Error -> {
                     binding.progressBar.visibility = View.GONE
-                    binding.tvEmpty.visibility = View.VISIBLE
                     binding.recyclerView.visibility = View.GONE
-                    binding.tvEmpty.text = "Error al cargar los datos"
+                    binding.btnRetry.visibility = View.VISIBLE
+
+                    binding.tvEmpty.apply {
+                        visibility = View.VISIBLE
+                        text = state.message
+                    }
+
+                    state.throwable?.let { Log.e("MainActivity", "Error al cargar libros", it) }
                 }
             }
         }
