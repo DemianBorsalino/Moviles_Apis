@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="#E8EAF6"> <!-- Azul suave de fondo -->
+
+    <!-- Ícono del libro -->
+    <ImageView
+        android:id="@+id/imgBookIcon"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/ic_book_menu"
+        android:contentDescription="@string/app_name"
+        android:layout_marginBottom="24dp"
+        app:tint="#6200EE" />
+
+    <!-- Texto de bienvenida -->
+    <TextView
+        android:id="@+id/tvWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bienvenido a BookFinder"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:textColor="#212121"
+        android:layout_marginBottom="40dp" />
+
+    <!-- Botón principal -->
+    <Button
+        android:id="@+id/btnSearchBook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Buscar tu libro"
+        android:paddingHorizontal="32dp"
+        android:paddingVertical="12dp"
+        android:textSize="18sp"
+        android:backgroundTint="#6200EE"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:translationZ="8dp"
+        android:stateListAnimator="@null" />
+</LinearLayout>
