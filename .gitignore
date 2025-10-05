@@ -7,6 +7,14 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+/caches/
+/daemon/
+/kotling-profile/
+/wrapper/
+/native/
+/.tmp/
+/.gradle/
+/android/
 .DS_Store
 /build
 /captures
