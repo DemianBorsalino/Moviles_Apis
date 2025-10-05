@@ -24,7 +24,7 @@ class DetailActivity : AppCompatActivity() {
             binding.tvTitle.text = "No book data available"
         }
         binding.btnBack.setOnClickListener {
-            finish()  // Cierra DetailActivity y vuelve a MainActivity
+            finish()
         }
     }
 

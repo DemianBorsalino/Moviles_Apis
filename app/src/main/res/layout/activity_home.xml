@@ -7,9 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
-        android:background="#E8EAF6"> <!-- Azul suave de fondo -->
+        android:background="#E8EAF6">
 
-    <!-- Ícono del libro -->
     <ImageView
         android:id="@+id/imgBookIcon"
         android:layout_width="120dp"
@@ -19,7 +18,6 @@
         android:layout_marginBottom="24dp"
         app:tint="#6200EE" />
 
-    <!-- Texto de bienvenida -->
     <TextView
         android:id="@+id/tvWelcome"
         android:layout_width="wrap_content"
@@ -30,7 +28,6 @@
         android:textColor="#212121"
         android:layout_marginBottom="40dp" />
 
-    <!-- Botón principal -->
     <Button
         android:id="@+id/btnSearchBook"
         android:layout_width="wrap_content"

@@ -33,17 +33,17 @@ class LibroViewModel(private val repository: RepositorioLibros) : ViewModel() {
                     _uiState.value = UiState.Success(books)
                 }
             } catch (e: retrofit2.HttpException) {
-                // Errores HTTP específicos
+
                 val code = e.code()
                 Log.e("BookViewModel", "HTTP error $code: ${e.message()}")
 
                 _uiState.value = UiState.Error("Error al cargar libros", e)
             } catch (e: java.net.UnknownHostException) {
-                // Sin conexión a Internet
+
                 Log.e("BookViewModel", "Sin conexión a Internet", e)
                 _uiState.value = UiState.Error("No hay conexión a Internet", e)
             } catch (e: Exception) {
-                // Otros errores genéricos
+
                 Log.e("BookViewModel", "Error inesperado", e)
                 _uiState.value = UiState.Error("Error al cargar libros", e)
             }
@@ -80,7 +80,6 @@ class LibroViewModel(private val repository: RepositorioLibros) : ViewModel() {
     }
 }
 
-// ViewModelFactory para poder pasar el repositorio
 class LibroViewModelFactory(private val repository: RepositorioLibros) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

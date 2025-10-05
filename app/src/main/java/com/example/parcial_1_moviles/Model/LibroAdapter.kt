@@ -45,12 +45,10 @@ class LibroAdapter(
             }
             binding.ivFavorite.setImageResource(starIcon)
 
-            // ✅Click en item → Detalle
             binding.root.setOnClickListener {
                 onItemClick(item)
             }
 
-            // ✅ Click en la estrella → Favorito
             binding.ivFavorite.setOnClickListener {
                 onFavoriteClick(item)
             }
