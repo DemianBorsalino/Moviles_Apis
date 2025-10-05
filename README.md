@@ -39,8 +39,4 @@ Service
 Cosas importantes de nuestro código
 Manejo de excepciones httpsExcption que nos da los errores de 400 y 500, Y error de IOException que nos da errores de red.
 Autocorrect que logra que si se escriben mal ciertos nombres, los busca como si estuvieran bien escritos.
-
-NO SE QUE MAS PONER
-
-
-E
+Uso de Glide que nos permite manejar imagenes de a partir de internet, sin necesidad de mantener esa imagenes en nuestros archivos
